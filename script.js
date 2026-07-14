@@ -33,22 +33,36 @@ function drawScene(distance_km, observer_h) {
     const observerY = canvas.height - 100 - observer_h;
     ctx.fillStyle = "black";
     ctx.fillRect(50, observerY, 10, 100);
+    
+    // Compute curvature
+    const drop = (distance_m ** 2) / (2 * R);
+    const curveScale = 0.02;
+    const curveHeight = drop * curveScale;
 
-    // Ship position (moves left→right)
-    const maxDist = 100000; // 100 km
+    // Ship position
+    const maxDist = 100000;
     const shipX = 60 + (distance_m / maxDist) * (canvas.width - 120);
-    const shipY = canvas.height - 100 - (hidden < 0 ? 0 : hidden);
+    const shipY = canvas.height - curveHeight - 100;
 
     // Ship graphic
-    ctx.fillStyle = hidden > 0 ? "gray" : "red";
+    ctx.fillStyle = curveHeight > observer_h ? "gray" : "red";
     ctx.fillRect(shipX, shipY, 60, 30);
+
+//    // Ship position (moves left→right)
+//   const maxDist = 100000; // 100 km
+//    const shipX = 60 + (distance_m / maxDist) * (canvas.width - 120);
+//    const shipY = canvas.height - 100 - (hidden < 0 ? 0 : hidden);
+//
+//    // Ship graphic
+//    ctx.fillStyle = hidden > 0 ? "gray" : "red";
+//    ctx.fillRect(shipX, shipY, 60, 30);
 
     // Line of sight
     ctx.strokeStyle = "yellow";
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(60, observerY);
-    ctx.lineTo(shipX + 30, shipY);
+    ctx.moveTo(60, canvas.height - 100 - observer_h);
+    ctx.lineTo(shipX + 30, shipY + 15);
     ctx.stroke();
 
     // Visibility text

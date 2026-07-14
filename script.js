@@ -75,6 +75,7 @@ function drawScene(distance_km, observer_h) {
 
     // Draw ship
     ctx.fillStyle = hidden ? "gray" : "red";
+    const shipHeight = 30; // or whatever you want
     const shipBaseY = earthCurveY(shipX);
     ctx.fillRect(shipX - 30, shipBaseY - shipHeight, 60, shipHeight);
 

@@ -8,6 +8,14 @@ const R = 6371000; // Earth radius in meters
 const exaggeration = 50; // vertical exaggeration factor
 const curveScale = 0.02; // pixels per meter
 
+// load assets
+const shipVisibleImg = new Image();
+shipVisibleImg.src = "assets/img/ship_visible.jpg";
+const shipHiddenImg = new Image();
+shipHiddenImg.src = "assets/img/ship_hidden.jpg";
+const observerImg = new Image();
+observerImg.src = "assets/img/observer.jpg";
+
 
 // Convert distance to curvature drop and map to canvas Y (visual only)
 function earthCurveY(x) {
@@ -132,12 +140,6 @@ function drawScene(distance_km, observer_h) {
        Draw ship (visual shading only)
        --------------------------------------------------------- */
 
-/* ---------------------------------------------------------
-   Draw ship (visual shading only)
-   --------------------------------------------------------- */
-
-    ctx.fillStyle = hiddenVisual ? "gray" : "red";
-    ctx.fillRect(shipX - 30, shipY, 60, shipHeight);
 
     /* ---------------------------------------------------------
        Real visibility text (new)
@@ -153,6 +155,19 @@ function drawScene(distance_km, observer_h) {
         ctx.fillText("Ship partially visible", 20, 30);
     } else {
         ctx.fillText("Ship completely hidden", 20, 30);
+    }
+/* ---------------------------------------------------------
+   Draw ship (visual shading only)
+   --------------------------------------------------------- */
+    let shipImgToDraw;
+    if (state === "invisible") {
+        shipImgToDraw = shipHiddenImg;
+    } else {
+        shipImgToDraw = shipVisibleImg;
+    }
+
+    if (shipImgToDraw.complete) {
+        ctx.drawImage(shipImgToDraw, shipX - 30, shipY - shipHeight, 60, shipHeight * 2);
     }
 }
 /* ---------------------------------------------------------

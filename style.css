@@ -31,8 +31,7 @@ input[type="range"] {
     display: block;
     margin: 0 auto;
     background: #cce0ff;
-    width: 100%;          /* responsive width */
-    max-width: 900px;     /* desktop size */
-    aspect-ratio: 16 / 9; /* keeps proportions on phones */
+    width: 900px;
+    height: 500px;      /* this is the missing piece */
     border: 2px solid #333;
 }

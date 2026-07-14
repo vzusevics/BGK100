@@ -29,7 +29,7 @@ input[type="range"] {
 
 #viewport {
     display: block;
-    margin: 1 auto;
+    margin: 0 auto;
     background: #cce0ff;
     width: 100%;
     max-width: 800px;

@@ -6,6 +6,8 @@ canvas.height = canvas.clientHeight;
 
 const R = 6371000; // Earth radius in meters
 const exaggeration = 10; // vertical exaggeration factor
+const curveScale = 0.02; // pixels per meter
+
 
 // Convert distance to curvature drop and map to canvas Y (visual only)
 function earthCurveY(x) {
@@ -14,7 +16,6 @@ function earthCurveY(x) {
     const dist_m = distanceRatio * maxDist;
 
     const drop_m = (dist_m ** 2) / (2 * R);
-    const curveScale = 0.02; // pixels per meter
 
     return canvas.height - 100 + drop_m * curveScale * exaggeration;
 }

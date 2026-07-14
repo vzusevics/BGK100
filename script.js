@@ -26,12 +26,7 @@ function earthCurveY(x) {
 function isHiddenReal(distance_m, observer_h, ship_h = 2) {
     // Curvature drop in meters
     const drop_m = (distance_m ** 2) / (2 * R);
-
-    // Ship height above tangent line
-    const remainingShip = ship_h + observer_h - drop_m;
-
-    // If shipVisibleHeight < observer height, ship is hidden
-    return remainingShip < 0;
+    return drop_m > (observer_h + ship_h);
 }
 
 /* ---------------------------------------------------------

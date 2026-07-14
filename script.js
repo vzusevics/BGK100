@@ -101,10 +101,12 @@ function drawScene(distance_km, observer_h) {
        Draw ship (visual shading only)
        --------------------------------------------------------- */
 
+/* ---------------------------------------------------------
+   Draw ship (visual shading only)
+   --------------------------------------------------------- */
+
     ctx.fillStyle = hiddenVisual ? "gray" : "red";
-    const shipHeight = 30;
-    const shipBaseY = earthCurveY(shipX);
-    ctx.fillRect(shipX - 30, shipBaseY - shipHeight, 60, shipHeight);
+    ctx.fillRect(shipX - 30, shipY, 60, shipHeight);
 
     /* ---------------------------------------------------------
        Real visibility text (new)

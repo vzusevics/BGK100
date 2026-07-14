@@ -30,6 +30,16 @@ function isHiddenReal(distance_m, observer_h, ship_h = 2) {
     return drop_m > (observer_h + ship_h);
 }
 
+//ship visible or not?
+function visibilityState(distance_m, observer_h, ship_h = 2) {
+    const drop_m = (distance_m ** 2) / (2 * R);
+    const hiddenHeight = drop_m - observer_h;
+
+    if (hiddenHeight <= 0) return "visible";
+    if (hiddenHeight >= ship_h) return "invisible";
+    return "partial";
+}
+
 /* ---------------------------------------------------------
    DRAW EVERYTHING (visual stays exactly as before)
    --------------------------------------------------------- */
@@ -116,18 +126,18 @@ function drawScene(distance_km, observer_h) {
     /* ---------------------------------------------------------
        Real visibility text (new)
        --------------------------------------------------------- */
+    const state = visibilityState(distance_m, observer_h, ship_h);
 
     ctx.fillStyle = "black";
     ctx.font = "20px Arial";
-    ctx.fillText(
-        hiddenReal
-            ? "Ship is hidden (real curvature)"
-            : "Ship is visible (real curvature)",
-        20,
-        30
-    );
-}
 
+    if (state === "visible") {
+        ctx.fillText("Ship completely visible", 20, 30);
+    } else if (state === "partial") {
+        ctx.fillText("Ship partially visible", 20, 30);
+    } else {
+        ctx.fillText("Ship completely hidden", 20, 30);
+    }
 /* ---------------------------------------------------------
    UPDATE UI + REDRAW
    --------------------------------------------------------- */

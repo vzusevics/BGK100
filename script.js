@@ -61,8 +61,12 @@ function drawScene(distance_km, observer_h) {
 
     // Ship horizontal position (visual)
     const maxDist = 100000;
-    const shipX = (distance_m / maxDist) * canvas.width;
+    let shipX = (distance_m / maxDist) * canvas.width;
 
+    // Prevent LOS slope from blowing up
+    if (shipX <= observerX + 1) {
+        shipX = observerX + 1;
+    }
     // Ship vertical position (visual)
     const shipBaseY = earthCurveY(shipX);
     const shipHeight = ship_h * curveScale * exaggeration;

@@ -146,9 +146,9 @@ function drawScene(distance_km, observer_h) {
     if (state === "visible") {
         ctx.fillText("Ship completely visible", 40, 30);
     } else if (state === "partial") {
-        ctx.fillText("Ship partially visible", 40, 30);
+        ctx.fillText("Ship partially visible", 75, 30);
     } else {
-        ctx.fillText("Ship completely hidden", 40, 30);
+        ctx.fillText("Ship completely hidden", 100, 100);
     }
 /* ---------------------------------------------------------
    Draw ship (visual shading only)

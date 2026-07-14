@@ -127,14 +127,15 @@ function drawScene(distance_km, observer_h) {
    --------------------------------------------------------- */
 
 function update() {
-    const distance = document.getElementById("distanceSlider").value;
-    const height = document.getElementById("heightSlider").value;
+    const distance = +document.getElementById("distanceSlider").value;
+    const height = +document.getElementById("heightSlider").value;
 
     document.getElementById("distanceValue").textContent = distance + " km";
     document.getElementById("heightValue").textContent = height + " m";
 
     drawScene(distance, height);
 }
+
 
 document.getElementById("distanceSlider").oninput = update;
 document.getElementById("heightSlider").oninput = update;

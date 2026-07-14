@@ -17,35 +17,41 @@ function drawScene(distance_km, observer_h) {
     const distance_m = distance_km * 1000;
     const hidden = computeHiddenHeight(distance_m, observer_h);
 
-//old    // Draw Earth curve
-//    ctx.fillStyle = "#88b0ff";
-//    ctx.beginPath();
-//    ctx.arc(canvas.width / 2, canvas.height + R / 5000, R / 5000, Math.PI, 0);
-//    ctx.fill();
-    // Earth curve (scaled)
+    // Earth curve
     ctx.fillStyle = "#88b0ff";
     ctx.beginPath();
     ctx.moveTo(0, canvas.height);
     ctx.quadraticCurveTo(
         canvas.width / 2,
-        canvas.height - 80,   // curvature height
+        canvas.height - 80,
         canvas.width,
         canvas.height
     );
     ctx.fill();
 
-    // Draw observer (left side)
+    // Observer
+    const observerY = canvas.height - 100 - observer_h;
     ctx.fillStyle = "black";
-    ctx.fillRect(50, canvas.height - 100 - observer_h / 10, 10, 100);
+    ctx.fillRect(50, observerY, 10, 100);
 
-    // Draw ship (right side)
-    const shipX = canvas.width - 150;
-    const shipY = canvas.height - 100 - (hidden < 0 ? 0 : hidden / 10);
+    // Ship position (moves left→right)
+    const maxDist = 100000; // 100 km
+    const shipX = 60 + (distance_m / maxDist) * (canvas.width - 120);
+    const shipY = canvas.height - 100 - (hidden < 0 ? 0 : hidden);
 
-    ctx.fillStyle = hidden > 0 ? "gray" : "red"; // gray = hidden, red = visible
+    // Ship graphic
+    ctx.fillStyle = hidden > 0 ? "gray" : "red";
     ctx.fillRect(shipX, shipY, 60, 30);
 
-    // Text feedback
+    // Line of sight
+    ctx.strokeStyle = "yellow";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(60, observerY);
+    ctx.lineTo(shipX + 30, shipY);
+    ctx.stroke();
+
+    // Visibility text
     ctx.fillStyle = "black";
     ctx.font = "20px Arial";
     ctx.fillText(
@@ -53,13 +59,6 @@ function drawScene(distance_km, observer_h) {
         20,
         30
     );
-    // Line of sight
-    ctx.strokeStyle = "yellow";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(60, canvas.height - 100 - observer_h); // observer eye
-    ctx.lineTo(shipX + 30, shipY); // ship center
-    ctx.stroke();
 }
 
 function update() {

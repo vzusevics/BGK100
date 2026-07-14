@@ -54,17 +54,16 @@ function drawScene(distance_km, observer_h) {
     // Observer position (visual)
     const observerX = 1;
     const observerBaseY = earthCurveY(observerX);
-    const observerY = observerBaseY - observer_h;
-
-    ctx.fillStyle = "black";
-    ctx.fillRect(observerX - 5, observerY, 10, 100);
+    const observerY = observerBaseY - observer_h * exaggeration;
 
     // Ship horizontal position (visual)
     const maxDist = 100000;
     const shipX = (distance_m / maxDist) * canvas.width;
 
     // Ship vertical position (visual)
-    const shipY = earthCurveY(shipX);
+    const shipBaseY = earthCurveY(shipX);
+    const shipHeight = 2 * exaggeration; // or ship_h * exaggeration
+    const shipY = shipBaseY - shipHeight;
 
     /* ---------------------------------------------------------
        VISUAL LOS INTERSECTION CHECK (kept exactly as before)

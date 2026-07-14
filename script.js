@@ -5,7 +5,7 @@ canvas.width = canvas.clientWidth;
 canvas.height = canvas.clientHeight;
 
 const R = 6371000; // Earth radius in meters
-const exaggeration = 10; // vertical exaggeration factor
+const exaggeration = 20; // vertical exaggeration factor
 const curveScale = 0.02; // pixels per meter
 
 
@@ -17,7 +17,7 @@ function earthCurveY(x) {
 
     const drop_m = (dist_m ** 2) / (2 * R);
 
-    return canvas.height - 100 + drop_m * curveScale * exaggeration;
+    return canvas.height - 200 + drop_m * curveScale * exaggeration;
 }
 
 /* ---------------------------------------------------------

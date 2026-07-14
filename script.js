@@ -11,7 +11,7 @@ const curveScale = 0.02; // pixels per meter
 
 // Convert distance to curvature drop and map to canvas Y (visual only)
 function earthCurveY(x) {
-    const maxDist = 100000; // 100 km in meters
+    const maxDist = 50000; // 50 km in meters
     const distanceRatio = x / canvas.width;
     const dist_m = distanceRatio * maxDist;
 
@@ -60,7 +60,7 @@ function drawScene(distance_km, observer_h) {
     const observerY = observerBaseY - observer_h * curveScale * exaggeration;
 
     // Ship horizontal position (visual)
-    const maxDist = 100000;
+    const maxDist = 50000;
     let shipX = (distance_m / maxDist) * canvas.width;
 
     // Prevent LOS slope from blowing up

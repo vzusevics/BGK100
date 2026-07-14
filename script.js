@@ -53,6 +53,13 @@ function drawScene(distance_km, observer_h) {
         20,
         30
     );
+    // Line of sight
+    ctx.strokeStyle = "yellow";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(60, canvas.height - 100 - observer_h); // observer eye
+    ctx.lineTo(shipX + 30, shipY); // ship center
+    ctx.stroke();
 }
 
 function update() {

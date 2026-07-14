@@ -138,6 +138,7 @@ function drawScene(distance_km, observer_h) {
     } else {
         ctx.fillText("Ship completely hidden", 20, 30);
     }
+}
 /* ---------------------------------------------------------
    UPDATE UI + REDRAW
    --------------------------------------------------------- */

@@ -38,6 +38,8 @@ function drawScene(distance_km, observer_h) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     const distance_m = distance_km * 1000;
+    const ship_h = 2;
+
 
     // Draw Earth curve (visual exaggerated)
     ctx.fillStyle = "#88b0ff";

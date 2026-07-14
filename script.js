@@ -116,7 +116,15 @@ function drawScene(distance_km, observer_h) {
     ctx.lineTo(canvas.width, losEndY);
     ctx.stroke();
 
+// LOS label
+    const horizonLabel = `horizon ${Math.round(horizon_m_clamped)} m`;
+    const labelX = horizonX - 5;
+    const labelY = horizonY + 5;
+    ctx.fillStyle = "black";
+    ctx.font = "16px Arial";
+    ctx.fillText(horizonLabel, labelX, labelY);
 
+    
     /* ---------------------------------------------------------
        Draw ship (visual shading only)
        --------------------------------------------------------- */

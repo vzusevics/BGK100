@@ -2,26 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Earth Curvature Visibility Tool</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Earth Curvature Demo</title>
+    <link rel="stylesheet" href="style.css?v=2">
 </head>
-
 <body>
-    <h1>Earth Curvature Visibility Tool</h1>
 
-    <div id="controls">
-        <label>Distance to target (km)</label>
-        <input type="range" id="distanceSlider" min="1" max="160" value="10">
-        <span id="distanceValue">10 km</span>
+<div id="controls">
+    <label>Distance to target (km)</label>
+    <input type="range" id="distanceSlider" min="1" max="100" value="10">
+    <span id="distanceValue">10 km</span>
 
+    <label>Observer height (m)</label>
+    <input type="range" id="heightSlider" min="1" max="200" value="10">
+    <span id="heightValue">10 m</span>
+</div>
 
-        <label>Observer height (m)</label>
-        <input type="range" id="heightSlider" min="0" max="100" value="10">
-        <span id="heightValue">10 m</span>
-    </div>
+<canvas id="viewCanvas"></canvas>
 
-    <canvas id="viewport"></canvas>
-
-    <script src="script.js"></script>
+<script src="script.js?v=2"></script>
 </body>
 </html>

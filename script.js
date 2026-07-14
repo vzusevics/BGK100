@@ -17,10 +17,21 @@ function drawScene(distance_km, observer_h) {
     const distance_m = distance_km * 1000;
     const hidden = computeHiddenHeight(distance_m, observer_h);
 
-    // Draw Earth curve
+//old    // Draw Earth curve
+//    ctx.fillStyle = "#88b0ff";
+//    ctx.beginPath();
+//    ctx.arc(canvas.width / 2, canvas.height + R / 5000, R / 5000, Math.PI, 0);
+//    ctx.fill();
+    // Earth curve (scaled)
     ctx.fillStyle = "#88b0ff";
     ctx.beginPath();
-    ctx.arc(canvas.width / 2, canvas.height + R / 5000, R / 5000, Math.PI, 0);
+    ctx.moveTo(0, canvas.height);
+    ctx.quadraticCurveTo(
+        canvas.width / 2,
+        canvas.height - 80,   // curvature height
+        canvas.width,
+        canvas.height
+    );
     ctx.fill();
 
     // Draw observer (left side)

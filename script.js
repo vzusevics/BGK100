@@ -39,8 +39,7 @@ function drawScene(distance_km, observer_h) {
 
     const distance_m = distance_km * 1000;
     const ship_h = 2;
-
-
+    
     // Draw Earth curve (visual exaggerated)
     ctx.fillStyle = "#88b0ff";
     ctx.beginPath();
@@ -77,32 +76,31 @@ function drawScene(distance_km, observer_h) {
        --------------------------------------------------------- */
 
     let hiddenVisual = false;
-    const losSlope = (shipY - observerY) / (shipX - observerX);
-
-    for (let x = observerX; x < shipX; x += 5) {
-        const yLOS = observerY + losSlope * (x - observerX);
-        if (earthCurveY(x) < yLOS) {
-            hiddenVisual = true;
-            break;
-        }
-    }
 
     /* ---------------------------------------------------------
        REAL CURVATURE CHECK (new)
        --------------------------------------------------------- */
 
-    const hiddenReal = isHiddenReal(distance_m, observer_h);
+//    const hiddenReal = isHiddenReal(distance_m, observer_h);
 
     /* ---------------------------------------------------------
        Draw LOS (visual)
        --------------------------------------------------------- */
+    const horizon_m = Math.sqrt(2 * R * observer_h);
+    const horizon_m_clamped = Math.min(horizon_m, maxDist);
+    const horizonX = (horizon_m_clamped / maxDist) * canvas.width;
+    const horizonY = earthCurveY(horizonX);
+    const losSlope = (horizonY - observerY) / (horizonX - observerX);
+    const losEndY = observerY + losSlope * (canvas.width - observerX);
+
 
     ctx.strokeStyle = "yellow";
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(observerX, observerY);
-    ctx.lineTo(shipX, shipY);
+    ctx.lineTo(canvas.width, losEndY);
     ctx.stroke();
+
 
     /* ---------------------------------------------------------
        Draw ship (visual shading only)

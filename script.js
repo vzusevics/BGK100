@@ -165,7 +165,7 @@ function drawScene(distance_km, observer_h) {
     }
 
     if (shipImgToDraw.complete) {
-        ctx.drawImage(shipImgToDraw, shipX - 30, shipY - 120, 120, 120);
+        ctx.drawImage(shipImgToDraw, shipX - 60, shipY - 120, 120, 120);
     }
 }
 /* ---------------------------------------------------------

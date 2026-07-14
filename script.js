@@ -47,6 +47,11 @@ function drawScene(distance_km, observer_h) {
 function update() {
     const distance = document.getElementById("distanceSlider").value;
     const height = document.getElementById("heightSlider").value;
+
+    // Update text readouts
+    document.getElementById("distanceValue").textContent = distance + " km";
+    document.getElementById("heightValue").textContent = height + " m";
+
     drawScene(distance, height);
 }
 

@@ -17,6 +17,12 @@ h1 {
     gap: 10px;
 }
 
+#controls span {
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+
 input[type="range"] {
     width: 100%;
 }

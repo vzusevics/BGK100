@@ -118,8 +118,8 @@ function drawScene(distance_km, observer_h) {
 
 // LOS label
     const horizonLabel = `horizon ${Math.round(horizon_m_clamped)} m`;
-    const labelX = horizonX - 500;
-    const labelY = horizonY - 500;
+    const labelX = horizonX - 50;
+    const labelY = horizonY - 50;
     ctx.fillStyle = "black";
     ctx.font = "16px Arial";
     ctx.fillText(horizonLabel, labelX, labelY);

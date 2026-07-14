@@ -20,7 +20,7 @@ function earthCurveY(x) {
 }
 
 /* ---------------------------------------------------------
-   REAL CURVATURE VISIBILITY CHECK (independent of drawing)
+   REAL CURVATURE VISIBILITY CHECK (independent of drawing) - correct
    --------------------------------------------------------- */
 
 function isHiddenReal(distance_m, observer_h, ship_h = 2) {

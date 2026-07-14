@@ -54,7 +54,7 @@ function drawScene(distance_km, observer_h) {
     // Observer position (visual)
     const observerX = 1;
     const observerBaseY = earthCurveY(observerX);
-    const observerY = observerBaseY - observer_h * exaggeration;
+    const observerY = observerBaseY - observer_h * curveScale * exaggeration;
 
     // Ship horizontal position (visual)
     const maxDist = 100000;
@@ -62,7 +62,7 @@ function drawScene(distance_km, observer_h) {
 
     // Ship vertical position (visual)
     const shipBaseY = earthCurveY(shipX);
-    const shipHeight = 2 * exaggeration; // or ship_h * exaggeration
+    const shipHeight = ship_h * curveScale * exaggeration;
     const shipY = shipBaseY - shipHeight;
 
     /* ---------------------------------------------------------

@@ -75,6 +75,10 @@ function drawScene(distance_km, observer_h) {
     const observerX = 1;
     const observerBaseY = earthCurveY(observerX);
     const observerY = observerBaseY - observer_h * curveScale * exaggeration;
+//observer img
+    if (observerImg.complete) {
+    ctx.drawImage(observerImg, observerX - 40, observerY - 80, 80, 80);
+    }
 
     // Ship horizontal position (visual)
     const maxDist = 50000;
@@ -146,9 +150,9 @@ function drawScene(distance_km, observer_h) {
     if (state === "visible") {
         ctx.fillText("Ship completely visible", 40, 30);
     } else if (state === "partial") {
-        ctx.fillText("Ship partially visible", 75, 30);
+        ctx.fillText("Ship partially visible", 40, 30);
     } else {
-        ctx.fillText("Ship completely hidden", 100, 100);
+        ctx.fillText("Ship completely hidden", 40, 30);
     }
 /* ---------------------------------------------------------
    Draw ship (visual shading only)
@@ -161,7 +165,7 @@ function drawScene(distance_km, observer_h) {
     }
 
     if (shipImgToDraw.complete) {
-        ctx.drawImage(shipImgToDraw, shipX - 30, shipY - shipHeight, 60, shipHeight * 2);
+        ctx.drawImage(shipImgToDraw, shipX - 30, shipY - shipHeight, 120, 120, 120);
     }
 }
 /* ---------------------------------------------------------

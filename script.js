@@ -99,6 +99,11 @@ function drawScene(distance_km, observer_h) {
     const horizon_m = Math.sqrt(2 * R * observer_h);
     const horizon_m_clamped = Math.min(horizon_m, maxDist);
     const horizonX = (horizon_m_clamped / maxDist) * canvas.width;
+
+    // prevent division by zero in LOS slope
+    if (horizonX <= observerX + 1) {
+        horizonX = observerX + 1;
+    }
     const horizonY = earthCurveY(horizonX);
     const losSlope = (horizonY - observerY) / (horizonX - observerX);
     const losEndY = observerY + losSlope * (canvas.width - observerX);

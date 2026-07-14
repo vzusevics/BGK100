@@ -75,7 +75,8 @@ function drawScene(distance_km, observer_h) {
 
     // Draw ship
     ctx.fillStyle = hidden ? "gray" : "red";
-    ctx.fillRect(shipX - 30, shipY - 15, 60, 30);
+    const shipBaseY = earthCurveY(shipX);
+    ctx.fillRect(shipX - 30, shipBaseY - shipHeight, 60, shipHeight);
 
     // Visibility text
     ctx.fillStyle = "black";

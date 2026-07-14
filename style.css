@@ -27,12 +27,12 @@ input[type="range"] {
     width: 100%;
 }
 
-#viewport {
+#viewCanvas {
     display: block;
     margin: 0 auto;
     background: #cce0ff;
-    width: 100%;
-    max-width: 800px;
-    height: 400px;
-    border: 1px solid #333;
+    width: 100%;          /* responsive width */
+    max-width: 900px;     /* desktop size */
+    aspect-ratio: 16 / 9; /* keeps proportions on phones */
+    border: 2px solid #333;
 }

@@ -23,7 +23,7 @@ function earthCurveY(x) {
    REAL CURVATURE VISIBILITY CHECK (independent of drawing)
    --------------------------------------------------------- */
 
-function isHiddenReal(distance_m, observer_h, ship_h = 30) {
+function isHiddenReal(distance_m, observer_h, ship_h = 2) {
     // Real curvature drop in meters
     const drop_m = (distance_m ** 2) / (2 * R);
 

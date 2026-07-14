@@ -5,7 +5,7 @@ canvas.width = canvas.clientWidth;
 canvas.height = canvas.clientHeight;
 
 const R = 6371000; // Earth radius in meters
-const exaggeration = 20; // vertical exaggeration factor
+const exaggeration = 30; // vertical exaggeration factor
 const curveScale = 0.02; // pixels per meter
 
 

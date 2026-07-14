@@ -17,7 +17,7 @@ function earthCurveY(x) {
 
     const drop_m = (dist_m ** 2) / (2 * R);
 
-    return canvas.height - 200 + drop_m * curveScale * exaggeration;
+    return canvas.height - 300 + drop_m * curveScale * exaggeration;
 }
 
 /* ---------------------------------------------------------

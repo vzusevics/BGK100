@@ -145,7 +145,7 @@ function drawScene(distance_km, observer_h) {
     const state = visibilityState(distance_m, observer_h, ship_h);
 
     ctx.fillStyle = "black";
-    ctx.font = "40px Arial";
+    ctx.font = "20px Arial";
 
     if (state === "visible") {
         ctx.fillText("Ship completely visible", 40, 30);
@@ -165,7 +165,7 @@ function drawScene(distance_km, observer_h) {
     }
 
     if (shipImgToDraw.complete) {
-        ctx.drawImage(shipImgToDraw, shipX - 30, shipY - shipHeight, 120, 120, 120);
+        ctx.drawImage(shipImgToDraw, shipX - 30, shipY - 120, 120, 120);
     }
 }
 /* ---------------------------------------------------------

@@ -123,8 +123,8 @@ function drawScene(distance_km, observer_h) {
     const horizonLabel = `horizon ${Math.round(horizon_m_clamped)} m`;
     const textWidth = ctx.measureText(horizonLabel).width;
 
-    const labelX = horizonX - textWidth - 5;
-    const labelY = horizonY - 50;
+    const labelX = horizonX + textWidth + 25;
+    const labelY = horizonY + 50;
     ctx.fillText(horizonLabel, labelX, labelY);
 
     

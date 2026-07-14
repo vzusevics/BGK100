@@ -7,7 +7,7 @@ canvas.height = canvas.clientHeight;
 const R = 6371000; // Earth radius in meters
 const exaggeration = 10; // vertical exaggeration factor
 
-// Convert distance to curvature drop and map to canvas Y
+// Convert distance to curvature drop and map to canvas Y (visual only)
 function earthCurveY(x) {
     const maxDist = 100000; // 100 km in meters
     const distanceRatio = x / canvas.width;
@@ -19,13 +19,31 @@ function earthCurveY(x) {
     return canvas.height - 100 + drop_m * curveScale * exaggeration;
 }
 
-// Draw everything
+/* ---------------------------------------------------------
+   REAL CURVATURE VISIBILITY CHECK (independent of drawing)
+   --------------------------------------------------------- */
+
+function isHiddenReal(distance_m, observer_h, ship_h = 30) {
+    // Real curvature drop in meters
+    const drop_m = (distance_m ** 2) / (2 * R);
+
+    // Ship height above tangent line
+    const shipVisibleHeight = ship_h - drop_m;
+
+    // If shipVisibleHeight < observer height, ship is hidden
+    return shipVisibleHeight < observer_h;
+}
+
+/* ---------------------------------------------------------
+   DRAW EVERYTHING (visual stays exactly as before)
+   --------------------------------------------------------- */
+
 function drawScene(distance_km, observer_h) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     const distance_m = distance_km * 1000;
 
-    // Draw Earth curve
+    // Draw Earth curve (visual exaggerated)
     ctx.fillStyle = "#88b0ff";
     ctx.beginPath();
     ctx.moveTo(0, canvas.height);
@@ -38,7 +56,7 @@ function drawScene(distance_km, observer_h) {
     ctx.closePath();
     ctx.fill();
 
-    // Observer position
+    // Observer position (visual)
     const observerX = 1;
     const observerBaseY = earthCurveY(observerX);
     const observerY = observerBaseY - observer_h;
@@ -46,26 +64,38 @@ function drawScene(distance_km, observer_h) {
     ctx.fillStyle = "black";
     ctx.fillRect(observerX - 5, observerY, 10, 100);
 
-    // Ship horizontal position
+    // Ship horizontal position (visual)
     const maxDist = 100000;
     const shipX = (distance_m / maxDist) * canvas.width;
 
-    // Ship vertical position (on curve)
+    // Ship vertical position (visual)
     const shipY = earthCurveY(shipX);
 
-    // LOS intersection check
-    let hidden = false;
+    /* ---------------------------------------------------------
+       VISUAL LOS INTERSECTION CHECK (kept exactly as before)
+       --------------------------------------------------------- */
+
+    let hiddenVisual = false;
     const losSlope = (shipY - observerY) / (shipX - observerX);
 
     for (let x = observerX; x < shipX; x += 5) {
         const yLOS = observerY + losSlope * (x - observerX);
         if (earthCurveY(x) < yLOS) {
-            hidden = true;
+            hiddenVisual = true;
             break;
         }
     }
 
-    // Draw line of sight
+    /* ---------------------------------------------------------
+       REAL CURVATURE CHECK (new)
+       --------------------------------------------------------- */
+
+    const hiddenReal = isHiddenReal(distance_m, observer_h);
+
+    /* ---------------------------------------------------------
+       Draw LOS (visual)
+       --------------------------------------------------------- */
+
     ctx.strokeStyle = "yellow";
     ctx.lineWidth = 2;
     ctx.beginPath();
@@ -73,19 +103,34 @@ function drawScene(distance_km, observer_h) {
     ctx.lineTo(shipX, shipY);
     ctx.stroke();
 
-    // Draw ship
-    ctx.fillStyle = hidden ? "gray" : "red";
-    const shipHeight = 30; // or whatever you want
+    /* ---------------------------------------------------------
+       Draw ship (visual shading only)
+       --------------------------------------------------------- */
+
+    ctx.fillStyle = hiddenVisual ? "gray" : "red";
+    const shipHeight = 30;
     const shipBaseY = earthCurveY(shipX);
     ctx.fillRect(shipX - 30, shipBaseY - shipHeight, 60, shipHeight);
 
-    // Visibility text
+    /* ---------------------------------------------------------
+       Real visibility text (new)
+       --------------------------------------------------------- */
+
     ctx.fillStyle = "black";
     ctx.font = "20px Arial";
-    ctx.fillText(hidden ? "Ship is hidden behind curvature" : "Ship is visible", 20, 30);
+    ctx.fillText(
+        hiddenReal
+            ? "Ship is hidden (real curvature)"
+            : "Ship is visible (real curvature)",
+        20,
+        30
+    );
 }
 
-// Update UI + redraw
+/* ---------------------------------------------------------
+   UPDATE UI + REDRAW
+   --------------------------------------------------------- */
+
 function update() {
     const distance = document.getElementById("distanceSlider").value;
     const height = document.getElementById("heightSlider").value;

@@ -16,7 +16,7 @@ function earthCurveY(x) {
     const drop_m = (dist_m ** 2) / (2 * R);
     const curveScale = 0.02; // pixels per meter
 
-    return canvas.height - 100 - drop_m * curveScale * exaggeration;
+    return canvas.height - 100 + drop_m * curveScale * exaggeration;
 }
 
 // Draw everything
@@ -39,15 +39,16 @@ function drawScene(distance_km, observer_h) {
     ctx.fill();
 
     // Observer position
-    const observerX = 60;
-    const observerY = canvas.height - 100 - observer_h;
+    const observerX = 1;
+    const observerBaseY = earthCurveY(observerX);
+    const observerY = observerBaseY - observer_h;
 
     ctx.fillStyle = "black";
     ctx.fillRect(observerX - 5, observerY, 10, 100);
 
     // Ship horizontal position
     const maxDist = 100000;
-    const shipX = observerX + (distance_m / maxDist) * (canvas.width - 120);
+    const shipX = (distance_m / maxDist) * canvas.width;
 
     // Ship vertical position (on curve)
     const shipY = earthCurveY(shipX);
@@ -74,7 +75,8 @@ function drawScene(distance_km, observer_h) {
 
     // Draw ship
     ctx.fillStyle = hidden ? "gray" : "red";
-    ctx.fillRect(shipX - 30, shipY - 15, 60, 30);
+    const shipBaseY = earthCurveY(shipX);
+    ctx.fillRect(shipX - 30, shipBaseY - shipHeight, 60, shipHeight);
 
     // Visibility text
     ctx.fillStyle = "black";

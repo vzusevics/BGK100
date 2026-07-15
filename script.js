@@ -200,7 +200,7 @@ function drawScene(distance_km, observer_h) {
     --------------------------------------------------------- */
 
     // screen‑space anchors (with your +30px offset)
-    const topScreenY    = circleY - circleRadius / 2 + 30;
+    const topScreenY    = circleY + 30 - circleRadius / 2;
     const bottomScreenY = circleY + circleRadius / 2;
 
     let shipScreenY = null;

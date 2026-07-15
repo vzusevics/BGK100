@@ -103,6 +103,8 @@ function drawScene(distance_km, observer_h) {
        --------------------------------------------------------- */
     const horizon_m = Math.sqrt(2 * R * observer_h);
     const horizon_m_clamped = Math.min(horizon_m, maxDist);
+    const horizon_km_clamped = horizon_m_clamped / 1000;
+
     const horizonX = (horizon_m_clamped / maxDist) * canvas.width;
 
     // prevent division by zero in LOS slope
@@ -125,7 +127,7 @@ function drawScene(distance_km, observer_h) {
     ctx.fillStyle = "black";
     ctx.font = "16px Arial";
 
-    const horizonLabel = `horizon ${Math.round(horizon_m_clamped)} m`;
+    const horizonLabel = `horizonts ${Math.round(horizon_km_clamped)} km`;
     const textWidth = ctx.measureText(horizonLabel).width;
 
     const labelX = horizonX - textWidth - 20;

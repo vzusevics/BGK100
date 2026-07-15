@@ -162,7 +162,7 @@ function drawScene(distance_km, observer_h) {
     }
     /* ---------------------------------------------------------
         POV Circle Graphic (state‑driven, screen‑space anchors)
-        --------------------------------------------------------- */
+    --------------------------------------------------------- */
 
     // recompute curvature drop and hidden height for POV logic
     const drop_m = (distance_m ** 2) / (2 * R);
@@ -194,21 +194,14 @@ function drawScene(distance_km, observer_h) {
     // horizon always in middle
     const horizonScreenY = circleY;
 
-    // draw sea
-    ctx.fillStyle = "#3366aa";
-    ctx.fillRect(circleX - circleRadius, horizonScreenY, circleDiameterPx, circleDiameterPx);
-
     /* ---------------------------------------------------------
     SHIP POSITIONING LOGIC (strictly by state)
-    Anchors are now halfway between center and perimeter
-    → independent of observer height
-    → no drift
-    → perfect continuity
+    Anchors halfway between center and perimeter
     --------------------------------------------------------- */
 
-    // screen‑space anchors (fixed, height‑independent)
-    const topScreenY    = circleY + 30 - circleRadius / 2;   // halfway to top
-    const bottomScreenY = circleY + circleRadius / 2;   // halfway to bottom
+    // screen‑space anchors (with your +30px offset)
+    const topScreenY    = circleY - circleRadius / 2 + 30;
+    const bottomScreenY = circleY + circleRadius / 2;
 
     let shipScreenY = null;
 
@@ -231,7 +224,7 @@ function drawScene(distance_km, observer_h) {
     }
 
     /* ---------------------------------------------------------
-    DRAW SHIP (only when not fully hidden)
+    DRAW SHIP FIRST (so sea can cover it)
     --------------------------------------------------------- */
 
     if (shipScreenY !== null) {
@@ -239,12 +232,19 @@ function drawScene(distance_km, observer_h) {
             ctx.drawImage(
                 shipVisibleImg,
                 circleX - 40,
-                shipScreenY - 40,   // center 80px image
+                shipScreenY - 40,
                 80,
                 80
             );
         }
     }
+
+    /* ---------------------------------------------------------
+    DRAW SEA LAST (covers descending ship)
+    --------------------------------------------------------- */
+
+    ctx.fillStyle = "#3366aa";
+    ctx.fillRect(circleX - circleRadius, horizonScreenY, circleDiameterPx, circleDiameterPx);
 
     ctx.restore();
 }

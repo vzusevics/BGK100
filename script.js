@@ -176,8 +176,9 @@ function drawScene(distance_km, observer_h) {
     const scale = circleDiameterPx / internalDiameter;
 
     // circle position
-    const circleX = canvas.width - 250;
-    const circleY = 150;
+    // put the circle safely inside the canvas
+    const circleX = canvas.width - circleRadius - 20;  // 20 px margin from right
+    const circleY = circleRadius + 20;                 // 20 px margin from top
     const circleRadius = circleDiameterPx / 2;
 
     // draw circle border

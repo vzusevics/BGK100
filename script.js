@@ -206,34 +206,35 @@ function drawScene(distance_km, observer_h) {
     ctx.fillRect(circleX - circleRadius, horizonScreenY, circleDiameterPx, circleDiameterPx);
 
     // ship movement rules
-    const centerY = 0;
-    const bottomY = internalDiameter / 4;
+    const horizonInternalY = 0;                 // horizon always centered
+    const shipBottomVisibleY = internalDiameter / 4;
+    const shipBottomHorizonY = 0;
+    const shipBottomHiddenY = internalDiameter / 2;
 
-    let shipInternalY;
+    let shipBottomInternalY;
 
-    if (state === "invisible") {
-        shipInternalY = bottomY + 200; // hidden below sea
-    } 
-    else if (state === "visible") {
-        shipInternalY = bottomY; // stationary bottom
-    } 
+    if (state === "visible") {
+        shipBottomInternalY = shipBottomVisibleY;
+    }
+
+    else if (state === "partial") {
+        const ratio = hiddenHeight / ship_h;  // 0 → visible, 1 → horizon
+        shipBottomInternalY =
+            shipBottomVisibleY - ratio * (shipBottomVisibleY - shipBottomHorizonY);
+    }
+
     else {
-        // partial → move toward horizon
-        const ratio = Math.min((distance_m - horizon_m) / 2000, 1);
-        shipInternalY = bottomY - ratio * bottomY;
+        const ratio = Math.min(hiddenHeight / ship_h, 1);  // 1 → fully hidden
+        shipBottomInternalY =
+            shipBottomHorizonY + ratio * (shipBottomHiddenY - shipBottomHorizonY);
     }
 
     if (state === "visible" || state === "partial") {
-        const shipScreenY = circleY + shipInternalY * scale;
+        const shipBottomScreenY = circleY + shipBottomInternalY * scale;
+        const shipScreenY = shipBottomScreenY - 40; // center the 80px ship image
 
         if (shipVisibleImg.complete) {
-            ctx.drawImage(
-                shipVisibleImg,
-                circleX - 40,
-                shipScreenY - 40,
-                80,
-                80
-            );
+            ctx.drawImage(shipVisibleImg, circleX - 40, shipScreenY, 80, 80);
         }
     }
 

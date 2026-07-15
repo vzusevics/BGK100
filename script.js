@@ -207,7 +207,7 @@ function drawScene(distance_km, observer_h) {
     --------------------------------------------------------- */
 
     // screen‑space anchors (fixed, height‑independent)
-    const topScreenY    = circleY + 30 - circleRadius / 2;   // halfway to top
+    const topScreenY    = circleY + 10 - circleRadius / 2;   // halfway to top
     const bottomScreenY = circleY + circleRadius / 2;   // halfway to bottom
 
     let shipScreenY = null;

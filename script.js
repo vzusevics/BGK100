@@ -127,7 +127,7 @@ function drawScene(distance_km, observer_h) {
     ctx.fillStyle = "black";
     ctx.font = "16px Arial";
 
-    const horizonLabel = `horizonts ${Math.round(horizon_km_clamped)} km`;
+    const horizonLabel = `horizonts ${Number(horizon_km_clamped.toFixed(1))} km`;
     const textWidth = ctx.measureText(horizonLabel).width;
 
     const labelX = horizonX - textWidth - 20;

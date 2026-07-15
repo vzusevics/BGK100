@@ -76,7 +76,7 @@ function drawScene(distance_km, observer_h) {
     const observerY = observerBaseY - observer_h * curveScale * exaggeration;
     //observer img
     if (observerImg.complete) {
-    ctx.drawImage(observerImg, observerX - 80, observerY - 80, 80, 80);
+    ctx.drawImage(observerImg, observerX - 1, observerY - 80, 80, 80);
     }
 
     // Ship horizontal position (visual)

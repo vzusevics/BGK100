@@ -164,10 +164,10 @@ function drawScene(distance_km, observer_h) {
         POV Circle Graphic
         --------------------------------------------------------- */
 
-    // compute hidden height (real curvature)
-    const drop_m = (distance_m ** 2) / (2 * R);
-    const hiddenHeight = drop_m - observer_h;
-    const horizon_km = horizon_m / 1000;
+    // horizon distance rounded to nearest 0.1 km
+    let horizon_km = Math.sqrt(2 * R * observer_h) / 1000;
+    horizon_km = Math.round(horizon_km * 10) / 10;
+    const horizon_m2 = horizon_km * 1000;   // avoid redeclaring horizon_m
 
     // POV internal scaling
     const circleDiameterPx = 200;
@@ -206,7 +206,7 @@ function drawScene(distance_km, observer_h) {
     ctx.fillRect(circleX - circleRadius, horizonScreenY, circleDiameterPx, circleDiameterPx);
 
     // ---------------------------------------------------------
-    // SHIP POSITIONING LOGIC (distance‑based U‑curve)
+    // SHIP POSITIONING LOGIC (distance‑based V‑curve)
     // ---------------------------------------------------------
 
     // key internal Y positions
@@ -215,27 +215,27 @@ function drawScene(distance_km, observer_h) {
     const hiddenBottomY = internalDiameter / 2;   // fully hidden bottom
 
     // distance difference from horizon
-    const d = distance_km - horizon_km;
+    const d_km = distance_km - horizon_km;
 
     let shipBottomInternalY;
 
     // PHASE A: fully visible → bottom fixed
-    if (d <= 0) {
+    if (d_km <= 0) {
         shipBottomInternalY = visibleBottomY;
     }
 
     // PHASE B: moving upward toward horizon
-    else if (d > 0 && d < 2) {
-        const ratio = d / 2;  // 0 → visible, 1 → horizon
+    else if (d_km > 0 && d_km < 2) {
+        const ratio = d_km / 2;  // 0 → visible, 1 → horizon
         shipBottomInternalY =
             visibleBottomY - ratio * (visibleBottomY - horizonBottomY);
     }
 
-    // PHASE C: moving downward into hidden region
-    else if (d >= 2 && d < 2 + ship_h) {
-        const ratio = (d - 2) / ship_h;  // 0 → horizon, 1 → hidden
+    // PHASE C: moving downward back toward visible bottom (partially visible)
+    else if (d_km >= 2 && d_km < 2 + ship_h / 1000) {
+        const ratio = (d_km - 2) / (ship_h / 1000);  // 0 → horizon, 1 → visible
         shipBottomInternalY =
-            horizonBottomY + ratio * (hiddenBottomY - horizonBottomY);
+            horizonBottomY + ratio * (visibleBottomY - horizonBottomY);
     }
 
     // PHASE D: fully hidden → do not draw ship
@@ -247,7 +247,7 @@ function drawScene(distance_km, observer_h) {
     // DRAW SHIP (only when not fully hidden)
     // ---------------------------------------------------------
 
-    if (d < 2 + ship_h) {
+    if (d_km < 2 + ship_h / 1000) {
         const shipBottomScreenY = circleY + shipBottomInternalY * scale;
         const shipScreenY = shipBottomScreenY - 40; // center 80px ship image
 

@@ -161,19 +161,15 @@ function drawScene(distance_km, observer_h) {
         ctx.drawImage(shipImgToDraw, shipX - 60, shipY - 120, 120, 120);
     }
     /* ---------------------------------------------------------
-        POV Circle Graphic (state‑driven, physics‑aligned)
+        POV Circle Graphic (state‑driven, screen‑space anchors)
         --------------------------------------------------------- */
 
-    // compute anchor distances
-    const hidden_m  = Math.sqrt(2 * R * (observer_h + ship_h));    // partial → hidden
+    // recompute curvature drop and hidden height for POV logic
+    const drop_m = (distance_m ** 2) / (2 * R);
+    const hiddenHeight = drop_m - observer_h;
 
-    // POV internal scaling
+    // POV circle geometry
     const circleDiameterPx = 200;
-    const shipHeightPx = 120;
-    const internalDiameter = shipHeightPx * 3;
-    const scale = circleDiameterPx / internalDiameter;
-
-    // circle position
     const circleX = canvas.width - 250;
     const circleY = 150;
     const circleRadius = circleDiameterPx / 2;
@@ -196,53 +192,59 @@ function drawScene(distance_km, observer_h) {
     ctx.fillRect(circleX - circleRadius, circleY - circleRadius, circleDiameterPx, circleDiameterPx);
 
     // horizon always in middle
-    const horizonInternalY = 0;
-    const horizonScreenY = circleY + horizonInternalY * scale;
+    const horizonScreenY = circleY;
 
     // draw sea
     ctx.fillStyle = "#3366aa";
     ctx.fillRect(circleX - circleRadius, horizonScreenY, circleDiameterPx, circleDiameterPx);
 
-    // ---------------------------------------------------------
-    // SHIP POSITIONING LOGIC (perfectly aligned with main states)
-    // ---------------------------------------------------------
+    /* ---------------------------------------------------------
+    SHIP POSITIONING LOGIC (strictly by state)
+    Anchors are now halfway between center and perimeter
+    → independent of observer height
+    → no drift
+    → perfect continuity
+    --------------------------------------------------------- */
 
-    const bottomY = internalDiameter / 4;   // bottom of circle
-    const topY    = -internalDiameter / 4;  // top of circle
+    // screen‑space anchors (fixed, height‑independent)
+    const topScreenY    = circleY - circleRadius / 2;   // halfway to top
+    const bottomScreenY = circleY + circleRadius / 2;   // halfway to bottom
 
-    let shipInternalY = null;
+    let shipScreenY = null;
 
-    // VISIBLE: move bottom → top between 0 and horizon_m
+    // VISIBLE: bottom → top based on distance to horizon
     if (state === "visible") {
+        const horizon_m = Math.sqrt(2 * R * observer_h);
         const ratio = Math.min(distance_m / horizon_m, 1);
-        shipInternalY = bottomY - ratio * (bottomY - topY);
+        shipScreenY = bottomScreenY - ratio * (bottomScreenY - topScreenY);
     }
 
-    // PARTIAL: move top → bottom between horizon_m and hidden_m
+    // PARTIAL: top → bottom based on hiddenHeight fraction
     else if (state === "partial") {
-        const ratio = Math.min((distance_m - horizon_m) / (hidden_m - horizon_m), 1);
-        shipInternalY = topY + ratio * (bottomY - topY);
+        const ratio = Math.min(Math.max(hiddenHeight / ship_h, 0), 1);
+        shipScreenY = topScreenY + ratio * (bottomScreenY - topScreenY);
     }
 
     // INVISIBLE: do not draw ship
     else {
-        shipInternalY = null;
+        shipScreenY = null;
     }
 
-    // ---------------------------------------------------------
-    // DRAW SHIP (only when not fully hidden)
-    // ---------------------------------------------------------
+    /* ---------------------------------------------------------
+    DRAW SHIP (only when not fully hidden)
+    --------------------------------------------------------- */
 
-    const internalDiameter = shipHeightPx * 3;
-    const scale = circleDiameterPx / internalDiameter;
-    // ...
-    const bottomY = internalDiameter / 2;
-    const topY    = -internalDiameter / 2;
-    // ...
-    let shipInternalY = null;
-    // visible / partial logic using shipInternalY
-    // ...
-    const shipScreenY = circleY + shipInternalY * scale - 40;
+    if (shipScreenY !== null) {
+        if (shipVisibleImg.complete) {
+            ctx.drawImage(
+                shipVisibleImg,
+                circleX - 40,
+                shipScreenY - 40,   // center 80px image
+                80,
+                80
+            );
+        }
+    }
 
     ctx.restore();
 }

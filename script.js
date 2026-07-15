@@ -167,6 +167,7 @@ function drawScene(distance_km, observer_h) {
     // compute hidden height (real curvature)
     const drop_m = (distance_m ** 2) / (2 * R);
     const hiddenHeight = drop_m - observer_h;
+    const horizon_km = horizon_m / 1000;
 
     // POV internal scaling
     const circleDiameterPx = 200;
@@ -214,7 +215,7 @@ function drawScene(distance_km, observer_h) {
     const hiddenBottomY = internalDiameter / 2;   // fully hidden bottom
 
     // distance difference from horizon
-    const d = distance_m - horizon_m;
+    const d = distance_km - horizon_km;
 
     let shipBottomInternalY;
 
@@ -224,15 +225,15 @@ function drawScene(distance_km, observer_h) {
     }
 
     // PHASE B: moving upward toward horizon
-    else if (d > 0 && d < 2000) {
-        const ratio = d / 2000;  // 0 → visible, 1 → horizon
+    else if (d > 0 && d < 2) {
+        const ratio = d / 2;  // 0 → visible, 1 → horizon
         shipBottomInternalY =
             visibleBottomY - ratio * (visibleBottomY - horizonBottomY);
     }
 
     // PHASE C: moving downward into hidden region
-    else if (d >= 2000 && d < 2000 + ship_h) {
-        const ratio = (d - 2000) / ship_h;  // 0 → horizon, 1 → hidden
+    else if (d >= 2 && d < 2 + ship_h) {
+        const ratio = (d - 2) / ship_h;  // 0 → horizon, 1 → hidden
         shipBottomInternalY =
             horizonBottomY + ratio * (hiddenBottomY - horizonBottomY);
     }
@@ -246,7 +247,7 @@ function drawScene(distance_km, observer_h) {
     // DRAW SHIP (only when not fully hidden)
     // ---------------------------------------------------------
 
-    if (d < 2000 + ship_h) {
+    if (d < 2 + ship_h) {
         const shipBottomScreenY = circleY + shipBottomInternalY * scale;
         const shipScreenY = shipBottomScreenY - 40; // center 80px ship image
 

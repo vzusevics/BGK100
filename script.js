@@ -164,9 +164,6 @@ function drawScene(distance_km, observer_h) {
         POV Circle Graphic
         --------------------------------------------------------- */
 
-    // compute horizon distance
-    const horizon_m = Math.sqrt(2 * R * observer_h);
-
     // compute hidden height (real curvature)
     const drop_m = (distance_m ** 2) / (2 * R);
     const hiddenHeight = drop_m - observer_h;

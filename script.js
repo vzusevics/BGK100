@@ -161,8 +161,8 @@ function drawScene(distance_km, observer_h) {
         ctx.drawImage(shipImgToDraw, shipX - 60, shipY - 120, 120, 120);
     }
     /* ---------------------------------------------------------
-    POV Circle Graphic
-    --------------------------------------------------------- */
+        POV Circle Graphic
+        --------------------------------------------------------- */
 
     // compute hidden height (real curvature)
     const drop_m = (distance_m ** 2) / (2 * R);
@@ -170,15 +170,14 @@ function drawScene(distance_km, observer_h) {
     const hiddenPx = hiddenHeight * curveScale * exaggeration;
 
     // POV internal scaling
-    const circleDiameterPx = 200;   // fixed on screen
-    const shipHeightPx = 120;       // arbitrary visual ship height
+    const circleDiameterPx = 200;
+    const shipHeightPx = 120;
     const internalDiameter = shipHeightPx * 3;
     const scale = circleDiameterPx / internalDiameter;
 
     // circle position
-    // put the circle safely inside the canvas
-    const circleX = canvas.width - circleRadius - 20;  // 20 px margin from right
-    const circleY = circleRadius + 20;                 // 20 px margin from top
+    const circleX = canvas.width - 250;
+    const circleY = 150;
     const circleRadius = circleDiameterPx / 2;
 
     // draw circle border
@@ -198,31 +197,33 @@ function drawScene(distance_km, observer_h) {
     ctx.fillStyle = "#88b0ff";
     ctx.fillRect(circleX - circleRadius, circleY - circleRadius, circleDiameterPx, circleDiameterPx);
 
-    // compute horizonInternalY
-    let horizonInternalY;
-
-    if (distance_m < horizon_m) {
-        // ship above horizon
-        horizonInternalY = -internalDiameter / 2;
-    } else if (distance_m < horizon_m + 2000) {
-        // ship approaching horizon
-        const ratio = (distance_m - horizon_m) / 2000;
-        horizonInternalY = -internalDiameter / 2 + ratio * (internalDiameter / 2);
-    } else {
-        // ship beyond horizon
-        horizonInternalY = 0;  // center of circle
-    }
-
-    // convert internal → screen
+    // horizon always in middle
+    const horizonInternalY = 0;
     const horizonScreenY = circleY + horizonInternalY * scale;
 
     // draw sea
     ctx.fillStyle = "#3366aa";
     ctx.fillRect(circleX - circleRadius, horizonScreenY, circleDiameterPx, circleDiameterPx);
 
-    // draw ship if visible
-    if (state !== "invisible") {
-        const shipInternalY = horizonInternalY + hiddenPx;
+    // ship movement rules
+    const centerY = 0;
+    const bottomY = internalDiameter / 4;
+
+    let shipInternalY;
+
+    if (state === "invisible") {
+        shipInternalY = bottomY + 200; // hidden below sea
+    } 
+    else if (state === "visible") {
+        shipInternalY = bottomY; // stationary bottom
+    } 
+    else {
+        // partial → move toward horizon
+        const ratio = Math.min((distance_m - horizon_m) / 2000, 1);
+        shipInternalY = bottomY - ratio * bottomY;
+    }
+
+    if (state === "visible" || state === "partial") {
         const shipScreenY = circleY + shipInternalY * scale;
 
         if (shipVisibleImg.complete) {

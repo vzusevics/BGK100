@@ -164,10 +164,12 @@ function drawScene(distance_km, observer_h) {
         POV Circle Graphic
         --------------------------------------------------------- */
 
+    // compute horizon distance
+    const horizon_m = Math.sqrt(2 * R * observer_h);
+
     // compute hidden height (real curvature)
     const drop_m = (distance_m ** 2) / (2 * R);
     const hiddenHeight = drop_m - observer_h;
-    const hiddenPx = hiddenHeight * curveScale * exaggeration;
 
     // POV internal scaling
     const circleDiameterPx = 200;
@@ -205,36 +207,60 @@ function drawScene(distance_km, observer_h) {
     ctx.fillStyle = "#3366aa";
     ctx.fillRect(circleX - circleRadius, horizonScreenY, circleDiameterPx, circleDiameterPx);
 
-    // ship movement rules
-    const horizonInternalY = 0;                 // horizon always centered
-    const shipBottomVisibleY = internalDiameter / 4;
-    const shipBottomHorizonY = 0;
-    const shipBottomHiddenY = internalDiameter / 2;
+    // ---------------------------------------------------------
+    // SHIP POSITIONING LOGIC (distance‑based U‑curve)
+    // ---------------------------------------------------------
+
+    // key internal Y positions
+    const visibleBottomY = internalDiameter / 4;   // fully visible resting bottom
+    const horizonBottomY = 0;                     // bottom exactly on horizon
+    const hiddenBottomY = internalDiameter / 2;   // fully hidden bottom
+
+    // distance difference from horizon
+    const d = distance_m - horizon_m;
 
     let shipBottomInternalY;
 
-    if (state === "visible") {
-        shipBottomInternalY = shipBottomVisibleY;
+    // PHASE A: fully visible → bottom fixed
+    if (d <= 0) {
+        shipBottomInternalY = visibleBottomY;
     }
 
-    else if (state === "partial") {
-        const ratio = hiddenHeight / ship_h;  // 0 → visible, 1 → horizon
+    // PHASE B: moving upward toward horizon
+    else if (d > 0 && d < 2000) {
+        const ratio = d / 2000;  // 0 → visible, 1 → horizon
         shipBottomInternalY =
-            shipBottomVisibleY - ratio * (shipBottomVisibleY - shipBottomHorizonY);
+            visibleBottomY - ratio * (visibleBottomY - horizonBottomY);
     }
 
+    // PHASE C: moving downward into hidden region
+    else if (d >= 2000 && d < 2000 + ship_h) {
+        const ratio = (d - 2000) / ship_h;  // 0 → horizon, 1 → hidden
+        shipBottomInternalY =
+            horizonBottomY + ratio * (hiddenBottomY - horizonBottomY);
+    }
+
+    // PHASE D: fully hidden → do not draw ship
     else {
-        const ratio = Math.min(hiddenHeight / ship_h, 1);  // 1 → fully hidden
-        shipBottomInternalY =
-            shipBottomHorizonY + ratio * (shipBottomHiddenY - shipBottomHorizonY);
+        shipBottomInternalY = hiddenBottomY;
     }
 
-    if (state === "visible" || state === "partial") {
+    // ---------------------------------------------------------
+    // DRAW SHIP (only when not fully hidden)
+    // ---------------------------------------------------------
+
+    if (d < 2000 + ship_h) {
         const shipBottomScreenY = circleY + shipBottomInternalY * scale;
-        const shipScreenY = shipBottomScreenY - 40; // center the 80px ship image
+        const shipScreenY = shipBottomScreenY - 40; // center 80px ship image
 
         if (shipVisibleImg.complete) {
-            ctx.drawImage(shipVisibleImg, circleX - 40, shipScreenY, 80, 80);
+            ctx.drawImage(
+                shipVisibleImg,
+                circleX - 40,
+                shipScreenY,
+                80,
+                80
+            );
         }
     }
 

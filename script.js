@@ -141,11 +141,11 @@ function drawScene(distance_km, observer_h) {
     ctx.font = "20px Arial";
 
     if (state === "visible") {
-        ctx.fillText("Ship completely visible", 40, 30);
+        ctx.fillText("Taizels redzams", 40, 30);
     } else if (state === "partial") {
-        ctx.fillText("Ship partially visible", 40, 30);
+        ctx.fillText("Taizels daļēji paslēpts aiz Zemes izliekuma", 40, 30);
     } else {
-        ctx.fillText("Ship completely hidden", 40, 30);
+        ctx.fillText("Taizels piln'bā paslēpts aiz Zemes izliekuma", 40, 30);
     }
     /* ---------------------------------------------------------
    Draw ship (visual shading only)

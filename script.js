@@ -165,6 +165,7 @@ function drawScene(distance_km, observer_h) {
     --------------------------------------------------------- */
 
     // compute hidden height (real curvature)
+    const drop_m = (distance_m ** 2) / (2 * R);
     const hiddenHeight = drop_m - observer_h;
     const hiddenPx = hiddenHeight * curveScale * exaggeration;
 

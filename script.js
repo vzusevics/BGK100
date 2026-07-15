@@ -165,7 +165,6 @@ function drawScene(distance_km, observer_h) {
         --------------------------------------------------------- */
 
     // compute anchor distances
-    const horizon_m = Math.sqrt(2 * R * observer_h);               // visible → partial
     const hidden_m  = Math.sqrt(2 * R * (observer_h + ship_h));    // partial → hidden
 
     // POV internal scaling

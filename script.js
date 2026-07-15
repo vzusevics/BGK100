@@ -147,7 +147,7 @@ function drawScene(distance_km, observer_h) {
     } else if (state === "partial") {
         ctx.fillText("Taizels daļēji paslēpts aiz Zemes izliekuma", 40, 30);
     } else {
-        ctx.fillText("Taizels piln'bā paslēpts aiz Zemes izliekuma", 40, 30);
+        ctx.fillText("Taizels pilnībā paslēpts aiz Zemes izliekuma", 40, 30);
     }
     /* ---------------------------------------------------------
    Draw ship (visual shading only)

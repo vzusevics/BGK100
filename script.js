@@ -233,19 +233,16 @@ function drawScene(distance_km, observer_h) {
     // DRAW SHIP (only when not fully hidden)
     // ---------------------------------------------------------
 
-    if (shipInternalY !== null) {
-        const shipScreenY = circleY + shipInternalY * scale - 40;
-
-        if (shipVisibleImg.complete) {
-            ctx.drawImage(
-                shipVisibleImg,
-                circleX - 40,
-                shipScreenY,
-                80,
-                80
-            );
-        }
-    }
+    const internalDiameter = shipHeightPx * 3;
+    const scale = circleDiameterPx / internalDiameter;
+    // ...
+    const bottomY = internalDiameter / 2;
+    const topY    = -internalDiameter / 2;
+    // ...
+    let shipInternalY = null;
+    // visible / partial logic using shipInternalY
+    // ...
+    const shipScreenY = circleY + shipInternalY * scale - 40;
 
     ctx.restore();
 }

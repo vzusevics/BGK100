@@ -7,8 +7,6 @@ canvas.height = canvas.clientHeight;
 const R = 6371000; // Earth radius in meters
 const exaggeration = 50; // vertical exaggeration factor
 const curveScale = 0.02; // pixels per meter
-const horizon_m = Math.sqrt(2 * R * observer_h);
-
 
 // load assets
 const shipVisibleImg = new Image();
@@ -55,7 +53,7 @@ function visibilityState(distance_m, observer_h, ship_h = 2) {
 
 function drawScene(distance_km, observer_h) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+    
     const distance_m = distance_km * 1000;
     const ship_h = 2;
     
@@ -103,6 +101,7 @@ function drawScene(distance_km, observer_h) {
     /* ---------------------------------------------------------
        Draw LOS (visual)
        --------------------------------------------------------- */
+    const horizon_m = Math.sqrt(2 * R * observer_h);
     const horizon_m_clamped = Math.min(horizon_m, maxDist);
     const horizonX = (horizon_m_clamped / maxDist) * canvas.width;
 
@@ -166,7 +165,6 @@ function drawScene(distance_km, observer_h) {
     --------------------------------------------------------- */
 
     // compute hidden height (real curvature)
-    const drop_m = (distance_m ** 2) / (2 * R);
     const hiddenHeight = drop_m - observer_h;
     const hiddenPx = hiddenHeight * curveScale * exaggeration;
 

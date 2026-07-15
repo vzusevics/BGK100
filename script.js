@@ -206,7 +206,7 @@ function drawScene(distance_km, observer_h) {
 
     // internal Y positions (no physics)
     const bottomY = internalDiameter / 2;   // bottom of circle
-    const topY = -internalDiameter / 3;     // top of circle
+    const topY = -internalDiameter / 2.5;     // top of circle
 
     let shipInternalY;
 

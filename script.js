@@ -161,8 +161,8 @@ function drawScene(distance_km, observer_h) {
         ctx.drawImage(shipImgToDraw, shipX - 60, shipY - 120, 120, 120);
     }
     /* ---------------------------------------------------------
-        POV Circle Graphic (state‑driven, screen‑space anchors)
-        --------------------------------------------------------- */
+        POV Circle Graphic (state‑driven, correct sea layering)
+    --------------------------------------------------------- */
 
     // recompute curvature drop and hidden height for POV logic
     const drop_m = (distance_m ** 2) / (2 * R);
@@ -194,21 +194,13 @@ function drawScene(distance_km, observer_h) {
     // horizon always in middle
     const horizonScreenY = circleY;
 
-    // draw sea
-    ctx.fillStyle = "#3366aa";
-    ctx.fillRect(circleX - circleRadius, horizonScreenY, circleDiameterPx, circleDiameterPx);
-
     /* ---------------------------------------------------------
     SHIP POSITIONING LOGIC (strictly by state)
-    Anchors are now halfway between center and perimeter
-    → independent of observer height
-    → no drift
-    → perfect continuity
     --------------------------------------------------------- */
 
-    // screen‑space anchors (fixed, height‑independent)
+    // screen‑space anchors (with your +5px offset)
     const topScreenY    = circleY + 5 - circleRadius / 2;   // halfway to top
-    const bottomScreenY = circleY + circleRadius / 2;   // halfway to bottom
+    const bottomScreenY = circleY + circleRadius / 2;       // halfway to bottom
 
     let shipScreenY = null;
 
@@ -231,19 +223,49 @@ function drawScene(distance_km, observer_h) {
     }
 
     /* ---------------------------------------------------------
-    DRAW SHIP (only when not fully hidden)
+    DRAW SEA + SHIP WITH CORRECT LAYERING
     --------------------------------------------------------- */
 
-    if (shipScreenY !== null) {
-        if (shipVisibleImg.complete) {
+    // ⭐ VISIBLE STATE — SEA FIRST, SHIP ON TOP
+    if (state === "visible") {
+        // draw sea first
+        ctx.fillStyle = "#3366aa";
+        ctx.fillRect(circleX - circleRadius, horizonScreenY, circleDiameterPx, circleDiameterPx);
+
+        // draw ship on top
+        if (shipScreenY !== null && shipVisibleImg.complete) {
             ctx.drawImage(
                 shipVisibleImg,
                 circleX - 40,
-                shipScreenY - 40,   // center 80px image
+                shipScreenY - 40,
                 80,
                 80
             );
         }
+    }
+
+    // ⭐ PARTIAL STATE — SHIP FIRST, SEA ON TOP (obscures ship)
+    else if (state === "partial") {
+        // draw ship first
+        if (shipScreenY !== null && shipVisibleImg.complete) {
+            ctx.drawImage(
+                shipVisibleImg,
+                circleX - 40,
+                shipScreenY - 40,
+                80,
+                80
+            );
+        }
+
+        // draw sea on top (covers descending ship)
+        ctx.fillStyle = "#3366aa";
+        ctx.fillRect(circleX - circleRadius, horizonScreenY, circleDiameterPx, circleDiameterPx);
+    }
+
+    // ⭐ INVISIBLE STATE — only draw sea
+    else {
+        ctx.fillStyle = "#3366aa";
+        ctx.fillRect(circleX - circleRadius, horizonScreenY, circleDiameterPx, circleDiameterPx);
     }
 
     ctx.restore();

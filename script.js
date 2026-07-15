@@ -7,6 +7,8 @@ canvas.height = canvas.clientHeight;
 const R = 6371000; // Earth radius in meters
 const exaggeration = 50; // vertical exaggeration factor
 const curveScale = 0.02; // pixels per meter
+const horizon_m = Math.sqrt(2 * R * observer_h);
+
 
 // load assets
 const shipVisibleImg = new Image();
@@ -15,7 +17,6 @@ const shipHiddenImg = new Image();
 shipHiddenImg.src = "assets/img/ship_hidden.jpg";
 const observerImg = new Image();
 observerImg.src = "assets/img/observer.jpg";
-
 
 // Convert distance to curvature drop and map to canvas Y (visual only)
 function earthCurveY(x) {
@@ -75,7 +76,7 @@ function drawScene(distance_km, observer_h) {
     const observerX = 1;
     const observerBaseY = earthCurveY(observerX);
     const observerY = observerBaseY - observer_h * curveScale * exaggeration;
-//observer img
+    //observer img
     if (observerImg.complete) {
     ctx.drawImage(observerImg, observerX - 40, observerY - 80, 80, 80);
     }
@@ -100,15 +101,8 @@ function drawScene(distance_km, observer_h) {
     let hiddenVisual = false;
 
     /* ---------------------------------------------------------
-       REAL CURVATURE CHECK (new)
-       --------------------------------------------------------- */
-
-//    const hiddenReal = isHiddenReal(distance_m, observer_h);
-
-    /* ---------------------------------------------------------
        Draw LOS (visual)
        --------------------------------------------------------- */
-    const horizon_m = Math.sqrt(2 * R * observer_h);
     const horizon_m_clamped = Math.min(horizon_m, maxDist);
     const horizonX = (horizon_m_clamped / maxDist) * canvas.width;
 
@@ -128,7 +122,7 @@ function drawScene(distance_km, observer_h) {
     ctx.lineTo(canvas.width, losEndY);
     ctx.stroke();
 
-// LOS label
+    // LOS label
     ctx.fillStyle = "black";
     ctx.font = "16px Arial";
 
@@ -154,7 +148,7 @@ function drawScene(distance_km, observer_h) {
     } else {
         ctx.fillText("Ship completely hidden", 40, 30);
     }
-/* ---------------------------------------------------------
+    /* ---------------------------------------------------------
    Draw ship (visual shading only)
    --------------------------------------------------------- */
     let shipImgToDraw;
@@ -167,6 +161,65 @@ function drawScene(distance_km, observer_h) {
     if (shipImgToDraw.complete) {
         ctx.drawImage(shipImgToDraw, shipX - 60, shipY - 120, 120, 120);
     }
+    /* ---------------------------------------------------------
+   POV Circle Graphic
+   --------------------------------------------------------- */
+    //section
+    const circleDiameter = 200;
+    const shipHeightPx = 120;       // your chosen ship image height
+    const internalDiameter = shipHeightPx * 3;
+    const scale = circleDiameterPx / internalDiameter;
+    const hiddenPx = hiddenHeight * curveScale * exaggeration;
+    //circle location
+    const circleX = canvas.width - 250;   // right side
+    const circleY = 150;                  // top
+    const circleRadius = circleDiameter / 2;
+    // draw circle border
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(circleX, circleY, circleRadius, 0, Math.PI * 2);
+    ctx.stroke();
+    // clip drawing to circle
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(circleX, circleY, circleRadius, 0, Math.PI * 2);
+    ctx.clip();
+    // draw sky
+    ctx.fillStyle = "#88b0ff";
+    ctx.fillRect(circleX - circleRadius, circleY - circleRadius, circleDiameter, circleDiameter);
+    // compute horizonInternalY (as described above)
+    let horizonInternalY;
+    if (distance_m < horizon_m) {
+        // ship above horizon
+        horizonInternalY = -internalDiameter/2;  // top of circle
+    } else if (distance_m < horizon_m + 2000) {
+        // ship approaching horizon
+        const ratio = (distance_m - horizon_m) / 2000;
+        horizonInternalY = -internalDiameter/2 + ratio * (internalDiameter/2);
+    } else {
+        // ship beyond horizon
+        horizonInternalY = 0;  // center of circle
+    }
+    // convert internal → screen
+    const horizonScreenY = circleY + horizonInternalY * scale;
+    // draw sea
+    ctx.fillStyle = "#3366aa";
+    ctx.fillRect(circleX - circleRadius, horizonScreenY, circleDiameter, circleDiameter);
+    // draw ship if visible
+    if (state !== "invisible") {
+        const shipInternalY = horizonInternalY + hiddenPx; // computed earlier
+        const shipScreenY = circleY + shipInternalY * scale;
+        if (shipVisibleImg.complete) {
+            ctx.drawImage(shipVisibleImg,
+                circleX - 40,
+                shipScreenY - 40,
+                80,
+                80
+            );
+        }
+    }
+    ctx.restore();
 }
 /* ---------------------------------------------------------
    UPDATE UI + REDRAW

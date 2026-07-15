@@ -161,8 +161,14 @@ function drawScene(distance_km, observer_h) {
         ctx.drawImage(shipImgToDraw, shipX - 60, shipY - 120, 120, 120);
     }
     /* ---------------------------------------------------------
-        POV Circle Graphic (state‑driven movement) drven by hidden/visible/partial states
+        POV Circle Graphic (state‑driven, continuous)
         --------------------------------------------------------- */
+
+    // horizon distance in km (no rounding needed for logic)
+    const horizon_km = horizon_m / 1000;
+
+    // define a "fully hidden" distance in km (you can tune this)
+    const hiddenLimitKm = horizon_km + 2;  // 2 km beyond horizon
 
     // POV internal scaling
     const circleDiameterPx = 200;
@@ -201,30 +207,31 @@ function drawScene(distance_km, observer_h) {
     ctx.fillRect(circleX - circleRadius, horizonScreenY, circleDiameterPx, circleDiameterPx);
 
     // ---------------------------------------------------------
-    // SHIP POSITIONING LOGIC (strictly state‑driven)
+    // SHIP POSITIONING LOGIC (state‑driven, continuous)
     // ---------------------------------------------------------
 
-    // internal Y positions (no physics)
     const bottomY = internalDiameter / 2;   // bottom of circle
     const topY = -internalDiameter / 2;     // top of circle
 
-    let shipInternalY;
+    let shipInternalY = null;
 
-    // MAIN STATE → POV MOVEMENT
+    // VISIBLE: move bottom → top between min distance and horizon_km
     if (state === "visible") {
-        // move upward from bottom → top
-        const ratio = Math.min(distance_km / 10, 1);  // simple 0→1 progression
+        const minKm = 0;  // or your slider's minimum km
+        const span = Math.max(horizon_km - minKm, 0.0001);
+        const ratio = Math.min(Math.max((distance_km - minKm) / span, 0), 1);
         shipInternalY = bottomY - ratio * (bottomY - topY);
     }
 
+    // PARTIAL: move top → bottom between horizon_km and hiddenLimitKm
     else if (state === "partial") {
-        // move downward from top → bottom
-        const ratio = Math.min((distance_km - horizon_m / 1000) / 10, 1);
+        const span = Math.max(hiddenLimitKm - horizon_km, 0.0001);
+        const ratio = Math.min(Math.max((distance_km - horizon_km) / span, 0), 1);
         shipInternalY = topY + ratio * (bottomY - topY);
     }
 
+    // INVISIBLE: no ship
     else {
-        // invisible → do not draw ship
         shipInternalY = null;
     }
 

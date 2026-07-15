@@ -207,8 +207,8 @@ function drawScene(distance_km, observer_h) {
     // SHIP POSITIONING LOGIC (perfectly aligned with main states)
     // ---------------------------------------------------------
 
-    const bottomY = internalDiameter / 2;   // bottom of circle
-    const topY    = -internalDiameter / 2;  // top of circle
+    const bottomY = internalDiameter / 4;   // bottom of circle
+    const topY    = -internalDiameter / 4;  // top of circle
 
     let shipInternalY = null;
 

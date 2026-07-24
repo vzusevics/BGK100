@@ -74,14 +74,14 @@ function drawScene(distance_km, observer_h) {
     const leftImg = new Image();
     leftImg.src = "assets/img/lv_side.png";
     if (leftImg.complete) {
-        ctx.drawImage(leftImg, 0, canvas.height - 200, 350, 350);
+        ctx.drawImage(leftImg, 0, canvas.height - 400, 350, 350);
     }
     //right side decor
     const rightImg = new Image();
     rightImg.src = "assets/img/est_side.png";
 
     if (rightImg.complete) {
-        ctx.drawImage(rightImg, canvas.width - 170, canvas.height - 200, 150, 150);
+        ctx.drawImage(rightImg, canvas.width - 170, canvas.height - 100, 150, 150);
     }
 
 

@@ -55,7 +55,7 @@ function drawScene(distance_km, observer_h) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
     const distance_m = distance_km * 1000;
-    const ship_h = 20;
+    const ship_h = 50;
     
     // Draw Earth curve (visual exaggerated)
     ctx.fillStyle = "#88b0ff";
@@ -72,13 +72,13 @@ function drawScene(distance_km, observer_h) {
 
     //left side decor
     const leftImg = new Image();
-    leftImg.src = "assets/img/lv_side.svg";
+    leftImg.src = "assets/img/lv_side.png";
     if (leftImg.complete) {
         ctx.drawImage(leftImg, 20, canvas.height - 200, 150, 150);
     }
     //right side decor
     const rightImg = new Image();
-    rightImg.src = "assets/img/est_side.svg";
+    rightImg.src = "assets/img/est_side.png";
 
     if (rightImg.complete) {
         ctx.drawImage(rightImg, canvas.width - 170, canvas.height - 200, 150, 150);

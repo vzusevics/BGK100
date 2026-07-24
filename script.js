@@ -77,7 +77,7 @@ function drawScene(distance_km, observer_h) {
     const leftImg = new Image();
     leftImg.src = "assets/img/lv_side.png";
     if (leftImg.complete) {
-        ctx.drawImage(leftImg, 0, canvas.height - 380, 400, 450);
+        ctx.drawImage(leftImg, 0, canvas.height - 410, 400, 450);
     }
     //right side decor
     const rightImg = new Image();

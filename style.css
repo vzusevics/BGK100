@@ -35,3 +35,16 @@ input[type="range"] {
     height: 500px;      /* this is the missing piece */
     border: 2px solid #333;
 }
+
+#educationPanel {
+    width: 100%;
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+#eduImage {
+    width: 100%;
+    height: auto;
+    display: block;
+}

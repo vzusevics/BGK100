@@ -77,14 +77,14 @@ function drawScene(distance_km, observer_h) {
     const leftImg = new Image();
     leftImg.src = "assets/img/lv_side.png";
     if (leftImg.complete) {
-        ctx.drawImage(leftImg, 0, canvas.height - 500, 400, 400);
+        ctx.drawImage(leftImg, 0, canvas.height - 400, 400, 400);
     }
     //right side decor
     const rightImg = new Image();
     rightImg.src = "assets/img/est_side.png";
 
     if (rightImg.complete) {
-        ctx.drawImage(rightImg, canvas.width - 160, canvas.height - 100, 200, 200);
+        ctx.drawImage(rightImg, canvas.width - 160, canvas.height - 200, 200, 200);
     }
 
 
@@ -161,11 +161,11 @@ function drawScene(distance_km, observer_h) {
     ctx.font = "20px Arial";
 
     if (state === "visible") {
-        ctx.fillText("Taizels redzams", 40, 30);
+        ctx.fillText("Vecais Taizels redzams", 40, 30);
     } else if (state === "partial") {
-        ctx.fillText("Taizels daļēji paslēpts aiz Zemes izliekuma", 40, 30);
+        ctx.fillText("Vecais Taizels daļēji paslēpts aiz Zemes izliekuma", 40, 30);
     } else {
-        ctx.fillText("Taizels pilnībā paslēpts aiz Zemes izliekuma", 40, 30);
+        ctx.fillText("Vecais Taizels pilnībā paslēpts aiz Zemes izliekuma", 40, 30);
     }
     /* ---------------------------------------------------------
    Draw ship (visual shading only)
@@ -286,138 +286,6 @@ function drawScene(distance_km, observer_h) {
     else {
         ctx.fillStyle = "#3366aa";
         ctx.fillRect(circleX - circleRadius, horizonScreenY, circleDiameterPx, circleDiameterPx);
-    }
-    /* ---------------------------------------------------------
-        SECOND POV CIRCLE (fixed distance + fixed lighthouse height)
-    --------------------------------------------------------- */
-
-    // fixed parameters
-    const pov2_distance_m = 35000;   // 35 km
-    const pov2_lighthouse_h = 57;    // 57 m lighthouse height
-
-    // compute curvature drop and hidden height
-    const pov2_drop_m = (pov2_distance_m ** 2) / (2 * R);
-    const pov2_hiddenHeight = pov2_drop_m - observer_h;
-
-    // determine visibility state (same logic)
-    let pov2_state;
-    if (pov2_hiddenHeight <= 0) pov2_state = "visible";
-    else if (pov2_hiddenHeight >= pov2_lighthouse_h) pov2_state = "invisible";
-    else pov2_state = "partial";
-
-    // POV circle geometry (bottom center)
-    const pov2_circleDiameterPx = 200;
-    const pov2_circleRadius = pov2_circleDiameterPx / 2;
-    const pov2_circleX = canvas.width / 2;
-    const pov2_circleY = canvas.height - 150;   // bottom center
-
-    // draw circle border
-    ctx.strokeStyle = "black";
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.arc(pov2_circleX, pov2_circleY, pov2_circleRadius, 0, Math.PI * 2);
-    ctx.stroke();
-
-    // clip drawing to circle
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(pov2_circleX, pov2_circleY, pov2_circleRadius, 0, Math.PI * 2);
-    ctx.clip();
-
-    // draw sky
-    ctx.fillStyle = "#88b0ff";
-    ctx.fillRect(
-        pov2_circleX - pov2_circleRadius,
-        pov2_circleY - pov2_circleRadius,
-        pov2_circleDiameterPx,
-        pov2_circleDiameterPx
-    );
-
-    // horizon always in middle
-    const pov2_horizonScreenY = pov2_circleY;
-
-    /* ---------------------------------------------------------
-    LIGHTHOUSE POSITIONING LOGIC (same as first POV)
-    --------------------------------------------------------- */
-
-    const pov2_topScreenY    = pov2_circleY + 5 - pov2_circleRadius / 2;
-    const pov2_bottomScreenY = pov2_circleY + pov2_circleRadius / 2;
-
-    let pov2_lighthouseScreenY = null;
-
-    // VISIBLE: bottom → top
-    if (pov2_state === "visible") {
-        const pov2_horizon_m = Math.sqrt(2 * R * observer_h);
-        const pov2_ratio = Math.min(pov2_distance_m / pov2_horizon_m, 1);
-        pov2_lighthouseScreenY = pov2_bottomScreenY - pov2_ratio * (pov2_bottomScreenY - pov2_topScreenY);
-    }
-
-    // PARTIAL: top → bottom
-    else if (pov2_state === "partial") {
-        const pov2_ratio = Math.min(Math.max(pov2_hiddenHeight / pov2_lighthouse_h, 0), 1);
-        pov2_lighthouseScreenY = pov2_topScreenY + pov2_ratio * (pov2_bottomScreenY - pov2_topScreenY);
-    }
-
-    // INVISIBLE: no lighthouse
-    else {
-        pov2_lighthouseScreenY = null;
-    }
-
-    /* ---------------------------------------------------------
-    DRAW SEA + LIGHTHOUSE WITH CORRECT LAYERING
-    --------------------------------------------------------- */
-
-    // VISIBLE — sea first, lighthouse on top
-    if (pov2_state === "visible") {
-        ctx.fillStyle = "#3366aa";
-        ctx.fillRect(
-            pov2_circleX - pov2_circleRadius,
-            pov2_horizonScreenY,
-            pov2_circleDiameterPx,
-            pov2_circleDiameterPx
-        );
-
-        if (pov2_lighthouseScreenY !== null && lighthouseImg.complete) {
-            ctx.drawImage(
-                lighthouseImg,
-                pov2_circleX - 40,
-                pov2_lighthouseScreenY - 40,
-                80,
-                80
-            );
-        }
-    }
-
-    // PARTIAL — lighthouse first, sea covers it
-    else if (pov2_state === "partial") {
-        if (pov2_lighthouseScreenY !== null && lighthouseImg.complete) {
-            ctx.drawImage(
-                lighthouseImg,
-                pov2_circleX - 40,
-                pov2_lighthouseScreenY - 40,
-                80,
-                80
-            );
-        }
-
-        ctx.fillStyle = "#3366aa";
-        ctx.fillRect(
-            pov2_circleX - pov2_circleRadius,
-            pov2_horizonScreenY,
-            pov2_circleDiameterPx,
-            pov2_circleDiameterPx
-        );
-    }
-
-    // INVISIBLE — only sea
-    else {
-        ctx.fillStyle = "#3366aa";
-        ctx.fillRect(
-            pov2_circleX - pov2_circleRadius,
-            pov2_horizonScreenY,
-            pov2_circleDiameterPx,
-            pov2_circleDiameterPx
-        );
     }
     ctx.restore();
 }

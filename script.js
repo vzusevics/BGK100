@@ -70,6 +70,21 @@ function drawScene(distance_km, observer_h) {
     ctx.closePath();
     ctx.fill();
 
+    //left side decor
+    const leftImg = new Image();
+    leftImg.src = "assets/img/lv_side.svg";
+    if (leftImg.complete) {
+        ctx.drawImage(leftImg, 20, canvas.height - 200, 150, 150);
+    }
+    //right side decor
+    const rightImg = new Image();
+    rightImg.src = "assets/img/est_side.svg";
+
+    if (rightImg.complete) {
+        ctx.drawImage(rightImg, canvas.width - 170, canvas.height - 200, 150, 150);
+    }
+
+
     // Observer position (visual)
     const observerX = 1;
     const observerBaseY = earthCurveY(observerX);
